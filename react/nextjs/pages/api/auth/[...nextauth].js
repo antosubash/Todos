@@ -8,9 +8,9 @@ export default NextAuth({
       id: "identity-server4",
       name: "IdentityServer4",
       scope: "openid profile email Todos offline_access", // Allowed Scopes
-      domain: "localhost:44354",
-      clientId: "Todos_Spa_1",
-      clientSecret: "1q2w3e*",
+      domain: process.env.IdentityServer4_Domain,
+      clientId: process.env.IdentityServer4_CLIENT_ID,
+      clientSecret: process.env.IdentityServer4_CLIENT_SECRET,
     }),
   ],
   callbacks: {

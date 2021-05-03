@@ -175,8 +175,8 @@ namespace Todos.IdentityServer
                     grantTypes: new[] { "password", "client_credentials", "authorization_code" },
                     secret: (configurationSection["Todos_Spa_1:ClientSecret"] ?? "1q2w3e*").Sha256(),
                     requireClientSecret: false,
-                    redirectUri: webClientRootUrl,
-                    postLogoutRedirectUri: webClientRootUrl,
+                    redirectUri: $"{webClientRootUrl}/authentication/login-callback/identity-server4",
+                    postLogoutRedirectUri: $"{webClientRootUrl}",
                     corsOrigins: new[] { webClientRootUrl.RemovePostFix("/") }
                 );
             }

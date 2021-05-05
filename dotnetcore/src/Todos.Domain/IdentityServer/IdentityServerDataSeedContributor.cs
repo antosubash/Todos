@@ -163,6 +163,24 @@ namespace Todos.IdentityServer
                 );
             }
 
+            // React Client
+var reactClient = configurationSection["Todos_Spa_1:ClientId"];
+if (!reactClient.IsNullOrWhiteSpace())
+{
+    var webClientRootUrl = configurationSection["Todos_Spa_1:RootUrl"]?.TrimEnd('/');
+
+    await CreateClientAsync(
+        name: reactClient,
+        scopes: commonScopes,
+        grantTypes: new[] { "client_credentials", "authorization_code" },
+        secret: (configurationSection["Todos_Spa_1:ClientSecret"] ?? "1q2w3e*").Sha256(),
+        requireClientSecret: false,
+        redirectUri: $"{webClientRootUrl}/authentication/login-callback/identity-server4",
+        postLogoutRedirectUri: $"{webClientRootUrl}",
+        corsOrigins: new[] { webClientRootUrl.RemovePostFix("/") }
+    );
+}
+
             //Console Test / Angular Client
             var consoleAndAngularClientId = configurationSection["Todos_App:ClientId"];
             if (!consoleAndAngularClientId.IsNullOrWhiteSpace())

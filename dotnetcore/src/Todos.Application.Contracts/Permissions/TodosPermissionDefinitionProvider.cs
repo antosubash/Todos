@@ -1,7 +1,6 @@
 ﻿using Todos.Localization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Localization;
-
 namespace Todos.Permissions
 {
     public class TodosPermissionDefinitionProvider : PermissionDefinitionProvider
@@ -10,7 +9,7 @@ namespace Todos.Permissions
         {
             var myGroup = context.AddGroup(TodosPermissions.GroupName);
 
-            var todoPermission = myGroup.AddPermission(TodosPermissions.Todo.Default, L("Permission:Default"));
+            var todoPermission = myGroup.AddPermission(TodosPermissions.Todo.Default, L("Permission:Default"))
             todoPermission.AddChild(TodosPermissions.Todo.Create, L("Permission:Create"));
             todoPermission.AddChild(TodosPermissions.Todo.Update, L("Permission:Update"));
             todoPermission.AddChild(TodosPermissions.Todo.Delete, L("Permission:Delete"));

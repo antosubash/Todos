@@ -10,6 +10,10 @@ namespace Todos.Permissions
         {
             var myGroup = context.AddGroup(TodosPermissions.GroupName);
 
+            var todoPermission = myGroup.AddPermission(TodosPermissions.Todo.Default, L("Permission:Default"));
+            todoPermission.AddChild(TodosPermissions.Todo.Create, L("Permission:Create"));
+            todoPermission.AddChild(TodosPermissions.Todo.Update, L("Permission:Update"));
+            todoPermission.AddChild(TodosPermissions.Todo.Delete, L("Permission:Delete"));
             //Define your own permissions here. Example:
             //myGroup.AddPermission(TodosPermissions.MyPermission1, L("Permission:MyPermission1"));
         }

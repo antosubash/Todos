@@ -5,11 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Todos.Dto;
+using Todos.Features;
 using Todos.Permissions;
+using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Features;
 
 namespace Todos
 {
+    [RequiresFeature(TodoFeatures.Todo)]
     public class TodoAppService : TodosAppService
     {
         private readonly IRepository<Todo, Guid> todoRepository;
@@ -33,6 +37,14 @@ namespace Todos
 
             if(result.Succeeded)
             {
+                var count = await todoRepository.CountAsync();
+                var maxTodoPerUser = await FeatureChecker.GetAsync<int>(TodoFeatures.MaxTodoPerUser);
+                if (count >= maxTodoPerUser)
+                {
+                    throw new BusinessException(nameof(TodoFeatures.MaxTodoPerUser),
+                                $"You can not create more than {maxTodoPerUser} todos!");
+                }
+
                 var todo = ObjectMapper.Map<TodoDto, Todo>(todoDto);
                 var createdTodo = await todoRepository.InsertAsync(todo);
                 return ObjectMapper.Map<Todo, TodoDto>(createdTodo);

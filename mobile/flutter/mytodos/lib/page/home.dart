@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:openid_client/openid_client.dart';
 import 'package:openid_client/openid_client_io.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,12 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final FlutterAppAuth _appAuth = FlutterAppAuth();
-  // For a list of client IDs, go to httpss://demo.identityserver.io
   final String _clientId = 'Todos_Flutter_2';
-  final String _redirectUrl = 'com.todos.native://callback';
-  static const String _issuer = 'https://8c80c4d04958.ngrok.io';
-  final String _discoveryUrl = _issuer + '/.well-known/openid-configuration';
+  static const String _issuer = 'https://d78170304b87.ngrok.io';
   final List<String> _scopes = <String>[
     'openid',
     'profile',
@@ -27,10 +22,6 @@ class _HomePageState extends State<HomePage> {
     'Todos'
   ];
   String logoutUrl = "";
-  final AuthorizationServiceConfiguration _serviceConfiguration =
-      const AuthorizationServiceConfiguration(
-          _issuer + '/connect/authorize', _issuer + '/connect/token');
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,10 +37,9 @@ class _HomePageState extends State<HomePage> {
               ElevatedButton(
                 child: Text("Login"),
                 onPressed: () async {
-                  //await signInWithAutoCodeExchange();
-                  var info =
-                      authenticate(Uri.parse(_issuer), _clientId, _scopes);
-                  print(info);
+                  var tokenInfo = await authenticate(
+                      Uri.parse(_issuer), _clientId, _scopes);
+                  print(tokenInfo.accessToken);
                 },
               ),
               ElevatedButton(
@@ -65,25 +55,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> signInWithAutoCodeExchange(
-      {bool preferEphemeralSession = false}) async {
-    try {
-      // show that we can also explicitly specify the endpoints rather than getting from the details from the discovery document
-      final AuthorizationTokenResponse? result =
-          await _appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(_clientId, _redirectUrl,
-            serviceConfiguration: _serviceConfiguration,
-            scopes: _scopes,
-            preferEphemeralSession: preferEphemeralSession,
-            promptValues: ["login"]),
-      );
-      print(result?.accessToken);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  authenticate(Uri uri, String clientId, List<String> scopes) async {
+  Future<TokenResponse> authenticate(
+      Uri uri, String clientId, List<String> scopes) async {
     // create the client
     var issuer = await Issuer.discover(uri);
     var client = new Client(issuer, clientId);
@@ -91,7 +64,7 @@ class _HomePageState extends State<HomePage> {
     // create a function to open a browser with an url
     urlLauncher(String url) async {
       if (await canLaunch(url)) {
-        await launch(url, forceWebView: true);
+        await launch(url, forceWebView: true, enableJavaScript: true);
       } else {
         throw 'Could not launch $url';
       }
@@ -114,11 +87,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       logoutUrl = c.generateLogoutUrl().toString();
     });
-    print("code");
     print(res.accessToken);
-    print(logoutUrl);
-    // return the user info
-    return await c.getUserInfo();
+    return res;
   }
 
   Future<void> logout() async {

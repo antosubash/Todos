@@ -156,7 +156,7 @@ namespace Todos.IdentityServer
                     scopes: commonScopes,
                     grantTypes: new[] { "hybrid" },
                     secret: (configurationSection["Todos_Web:ClientSecret"] ?? "1q2w3e*").Sha256(),
-                    redirectUri: $"{webClientRootUrl}signin-oidc",
+                    redirectUri: new[] { $"{webClientRootUrl}signin-oidc" },
                     postLogoutRedirectUri: $"{webClientRootUrl}signout-callback-oidc",
                     frontChannelLogoutUri: $"{webClientRootUrl}Account/FrontChannelLogout",
                     corsOrigins: new[] { webClientRootUrl.RemovePostFix("/") }
@@ -175,9 +175,40 @@ namespace Todos.IdentityServer
                     grantTypes: new[] { "password", "client_credentials", "authorization_code" },
                     secret: (configurationSection["Todos_Spa_1:ClientSecret"] ?? "1q2w3e*").Sha256(),
                     requireClientSecret: false,
-                    redirectUri: $"{webClientRootUrl}/authentication/login-callback/identity-server4",
+                    redirectUri: new[] { $"{webClientRootUrl}/authentication/login-callback/identity-server4" },
                     postLogoutRedirectUri: $"{webClientRootUrl}",
                     corsOrigins: new[] { webClientRootUrl.RemovePostFix("/") }
+                );
+            }
+
+            // Flutter Client
+            var flutterClient = configurationSection["Todos_Flutter_1:ClientId"];
+            if (!flutterClient.IsNullOrWhiteSpace())
+            {
+                var redirectUrl = configurationSection.GetSection("Todos_Flutter_1:RedirectUri").Get<string[]>();
+                var clientCorsOrigins = configurationSection.GetSection("Todos_Flutter_1:ClientCorsOrigins").Get<string[]>();
+                await CreateClientAsync(
+                    name: flutterClient,
+                    scopes: commonScopes,
+                    grantTypes: new[] { "authorization_code" },
+                    secret: "",
+                    requireClientSecret: false,
+                    corsOrigins: clientCorsOrigins,
+                    redirectUri: redirectUrl
+                );
+            }
+
+            // Flutter2 Client
+            var flutter2Client = configurationSection["Todos_Flutter_2:ClientId"];
+            if (!flutter2Client.IsNullOrWhiteSpace())
+            {
+                var redirectUrl = configurationSection["Todos_Flutter_2:RedirectUri"];
+                await CreateClientAsync(
+                    name: flutter2Client,
+                    scopes: commonScopes,
+                    grantTypes: new[] { "authorization_code" },
+                    requireClientSecret: false,
+                    redirectUri: new[] { redirectUrl }
                 );
             }
 
@@ -193,7 +224,7 @@ namespace Todos.IdentityServer
                     grantTypes: new[] { "password", "client_credentials", "authorization_code" },
                     secret: (configurationSection["Todos_App:ClientSecret"] ?? "1q2w3e*").Sha256(),
                     requireClientSecret: false,
-                    redirectUri: webClientRootUrl,
+                    redirectUri: new[] { webClientRootUrl },
                     postLogoutRedirectUri: webClientRootUrl,
                     corsOrigins: new[] { webClientRootUrl.RemovePostFix("/") }
                 );
@@ -211,7 +242,7 @@ namespace Todos.IdentityServer
                     grantTypes: new[] { "authorization_code" },
                     secret: configurationSection["Todos_Blazor:ClientSecret"]?.Sha256(),
                     requireClientSecret: false,
-                    redirectUri: $"{blazorRootUrl}/authentication/login-callback",
+                    redirectUri: new[] { $"{blazorRootUrl}/authentication/login-callback" },
                     postLogoutRedirectUri: $"{blazorRootUrl}/authentication/logout-callback",
                     corsOrigins: new[] { blazorRootUrl.RemovePostFix("/") }
                 );
@@ -229,7 +260,7 @@ namespace Todos.IdentityServer
                     grantTypes: new[] { "authorization_code" },
                     secret: configurationSection["Todos_Swagger:ClientSecret"]?.Sha256(),
                     requireClientSecret: false,
-                    redirectUri: $"{swaggerRootUrl}/swagger/oauth2-redirect.html",
+                    redirectUri: new[] { $"{swaggerRootUrl}/swagger/oauth2-redirect.html" },
                     corsOrigins: new[] { swaggerRootUrl.RemovePostFix("/") }
                 );
             }
@@ -240,7 +271,7 @@ namespace Todos.IdentityServer
             IEnumerable<string> scopes,
             IEnumerable<string> grantTypes,
             string secret = null,
-            string redirectUri = null,
+            IEnumerable<string> redirectUri = null,
             string postLogoutRedirectUri = null,
             string frontChannelLogoutUri = null,
             bool requireClientSecret = true,
@@ -301,9 +332,12 @@ namespace Todos.IdentityServer
 
             if (redirectUri != null)
             {
-                if (client.FindRedirectUri(redirectUri) == null)
+                foreach (var  uri in redirectUri)
                 {
-                    client.AddRedirectUri(redirectUri);
+                    if (client.FindRedirectUri(uri) == null)
+                    {
+                        client.AddRedirectUri(uri);
+                    }
                 }
             }
 

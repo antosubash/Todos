@@ -83,6 +83,10 @@ namespace Todos.Web
             ConfigureNavigationServices();
             ConfigureAutoApiControllers();
             ConfigureSwaggerServices(context.Services);
+            context.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => { builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("*"); });
+            });
         }
 
         private void ConfigureUrls(IConfiguration configuration)

@@ -181,6 +181,20 @@ namespace Todos.IdentityServer
                 );
             }
 
+            // Flutter2 Client
+            var flutter2Client = configurationSection["Todos_Flutter_2:ClientId"];
+            if (!flutter2Client.IsNullOrWhiteSpace())
+            {
+                var redirectUrl = configurationSection["Todos_Flutter_2:RedirectUri"];
+                await CreateClientAsync(
+                    name: flutter2Client,
+                    scopes: commonScopes,
+                    grantTypes: new[] { "authorization_code" },
+                    requireClientSecret: false,
+                    redirectUri: redirectUrl
+                );
+            }
+
             //Console Test / Angular Client
             var consoleAndAngularClientId = configurationSection["Todos_App:ClientId"];
             if (!consoleAndAngularClientId.IsNullOrWhiteSpace())

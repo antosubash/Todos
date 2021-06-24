@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "gen": "nswag openapi2tsclient /input:https://localhost:44354/swagger/v1/swagger.json /output:interfaces/TodoApiClient.ts /classname:TodoApiClient /template:axios"
   },
   "dependencies": {
     "next": "latest",
@@ -14,6 +15,7 @@
     "react-dom": "^17.0.1"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.3.3",
     "autoprefixer": "^10.0.4",
     "postcss": "^8.1.10",
     "tailwindcss": "^2.1.1"

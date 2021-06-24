@@ -1,0 +1,32 @@
+{
+  "name": "todos",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc",
+    "gen": "nswag openapi2tsclient /input:https://localhost:44354/swagger/v1/swagger.json /output:interfaces/TodoApiClient.ts /classname:TodoApiClient /template:axios"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.4.0",
+    "@emotion/react": "^11.4.0",
+    "@emotion/server": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.4",
+    "clsx": "^1.1.1",
+    "next": "^10.2.3",
+    "next-auth": "^3.25.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.21",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "typescript": "^4.3.2"
+  },
+  "license": "MIT"
+}

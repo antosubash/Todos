@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "next": "latest",
-    "next-auth": "^3.19.6",
+    "next-auth": "^4.24.12",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
